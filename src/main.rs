@@ -18,16 +18,18 @@ impl Jumper {
         }
     }
 
-    pub fn goto(&self, dir: String) -> String {
+    pub fn goto(&self, dir: &String) -> String {
         let jumpers = self
             .load_routes()
             .expect("Could not load routes for jumper.");
         if (!jumpers.is_null()) {
-            return jumpers[dir].to_string();
+            let path = &jumpers[dir];
+            println!("{}", path);
+            return path.to_string();
         }
         return "".to_string();
     }
-    pub fn assemble(&self, dir: String) -> String {
+    pub fn assemble(&self, dir: &String) -> String {
         // let workspace = self.workspace();
         let path = self.search(&dir);
         if !path.is_empty() {
@@ -119,7 +121,18 @@ impl Jumper {
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let command = args[1].as_str();
     let jumper = Jumper::default();
-    let added = jumper.assemble("Downloads".to_string());
-    println!("{}", added);
+    match command {
+        "goto" => {
+            let dir = &args[2];
+            jumper.goto(&dir);
+        }
+        "assemble" => {
+            let dir = &args[2];
+            jumper.assemble(&dir);
+        }
+        _ => println!("Unrecognized command: {}", command),
+    }
 }
