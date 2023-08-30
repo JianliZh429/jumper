@@ -32,7 +32,7 @@ impl Jumper {
     }
     pub fn assemble(&self, dir: &String) -> String {
         // let workspace = self.workspace();
-        let path = self.search(&dir);
+        let path = self.find(&dir);
         if !path.is_empty() {
             self.add_route(&dir, &path);
             return path;
@@ -42,7 +42,7 @@ impl Jumper {
     pub fn shortcut(&self, shortcut: &str, filename: &str) -> Result<()> {
         return Ok(());
     }
-    fn search(&self, dir: &String) -> String {
+    fn find(&self, dir: &String) -> String {
         let workspace = self.workspace();
         let workspace_path = Path::new(workspace.as_str());
         let mut matched = Vec::new();
