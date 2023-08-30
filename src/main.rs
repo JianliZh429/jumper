@@ -58,7 +58,7 @@ impl Jumper {
             }
         }
         if matched.len() == 0 {
-            println!("Can tot find '{}' in '{}'", dir, workspace);
+            println!("Can not find '{}' in '{}'", dir, workspace);
             return "".to_string();
         } else if matched.len() > 1 {
             println!(
@@ -73,13 +73,11 @@ impl Jumper {
 
     fn workspace(&self) -> String {
         return match env::var("JUMPER_WORKSPACE") {
-            Ok(v) => {
-                v
-            }
+            Ok(v) => v,
             Err(err) => {
                 panic!("JUMPER_WORKSPACE variable is not set")
             }
-        }
+        };
     }
     fn home(&self) -> String {
         match env::var("JUMPER_HOME") {
@@ -93,7 +91,6 @@ impl Jumper {
     }
     fn load_routes(&self) -> Result<Value> {
         let filepath = Path::new(&self.home()).join(self.routes.as_str());
-        println!("Filepath, {}", filepath.display());
         return match fs::read_to_string(&filepath) {
             Ok(value) => {
                 let json: serde_json::Value =
@@ -106,15 +103,13 @@ impl Jumper {
                 file.write_all(b"{}");
                 Ok(serde_json::Value::String("{}".to_string()))
             }
-        }
+        };
     }
     fn add_route(&self, dir: &String, path: &String) -> std::io::Result<()> {
         let mut routes = self.load_routes().expect("Failed to load routes");
         routes[dir] = Value::from(path.as_str());
         let filepath = Path::new(&self.home()).join(self.routes.as_str());
         let mut fs = fs::File::create(filepath).expect("Can not open routes file");
-        // let mut wirter = BufWriter::new(fs);
-        let vec = vec![1, 2, 3];
         serde_json::to_writer_pretty(&mut fs, &routes);
         fs.flush()?;
         Ok(())

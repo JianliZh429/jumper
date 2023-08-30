@@ -36,6 +36,7 @@ elif [ -f "${HOME}/.bash_profile" ]; then
   BASHRC="${HOME}/.bash_profile"
 fi
 
+echo "Shell config: ${BASHRC}"
 if [[ -n "${BASHRC}" ]]; then
   source "${JUMPERRC}"
   SOURCE_JUMPERRC="source ${JUMPERRC}"
