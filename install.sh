@@ -14,15 +14,15 @@ if [[ -z "${JUMPER_WORKSPACE}" ]]; then
 fi
 echo "JUMPER_WORKSPACE: ${JUMPER_WORKSPACE}"
 
-JUMPER_LAYER=4
-echo "JUMPER_LAYER: ${JUMPER_LAYER}"
+JUMPER_DEPTH=4
+echo "JUMPER_DEPTH: ${JUMPER_DEPTH}"
 
 JUMPER="${JUMPER_HOME}/jumper"
 JUMPERRC="${JUMPER_HOME}/jumperrc"
 
 echo "export JUMPER_HOME=${JUMPER_HOME}
 export JUMPER_WORKSPACE=${JUMPER_WORKSPACE}
-export JUMPER_LAYER=${JUMPER_LAYER}
+export JUMPER_DEPTH=${JUMPER_DEPTH}
 alias j='. ${JUMPER_HOME}/jumper.sh'
 alias jassemble='${JUMPER} assemble'
 alias jalias='${JUMPER} alias'

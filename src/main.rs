@@ -1,15 +1,25 @@
 #![allow(unused)]
 
-use clap::Parser;
-use serde_json::{Result, Value};
 use std::{
     env, fs,
     io::{BufWriter, Write},
     path::Path,
 };
 
+use clap::Parser;
+use serde_json::{Result, Value};
+use walkdir::{DirEntry, WalkDir};
+
 struct Jumper {
     routes: String,
+}
+
+fn is_hidden(entry: &DirEntry) -> bool {
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s.starts_with("."))
+        .unwrap_or(false)
 }
 
 impl Jumper {
@@ -42,19 +52,28 @@ impl Jumper {
     pub fn shortcut(&self, shortcut: &str, filename: &str) -> Result<()> {
         return Ok(());
     }
+
     fn find(&self, dir: &String) -> String {
         let workspace = self.workspace();
         let workspace_path = Path::new(workspace.as_str());
         let mut matched = Vec::new();
-        for entry in fs::read_dir(workspace_path).unwrap() {
-            let entry = entry.unwrap();
-            let path = entry.path();
-            let metadata = fs::metadata(&path).unwrap();
-            if metadata.is_dir() {
-                let filename = path.file_name().unwrap().to_str().unwrap();
-                if dir.eq(filename) {
-                    matched.push(path.to_str().unwrap().to_string())
+        let walker = WalkDir::new(workspace_path)
+            .max_depth(self.depth())
+            .follow_links(true)
+            .into_iter();
+        for entry in walker.filter_entry(|e| !is_hidden(e)) {
+            match entry {
+                Ok(entry) => {
+                    let path = entry.path();
+                    let metadata = fs::metadata(&path).unwrap();
+                    if metadata.is_dir() {
+                        let filename = path.file_name().unwrap().to_str().unwrap();
+                        if dir.eq(filename.trim()) {
+                            matched.push(path.to_str().unwrap().to_string())
+                        }
+                    }
                 }
+                Err(e) => continue,
             }
         }
         if matched.len() == 0 {
@@ -68,9 +87,17 @@ impl Jumper {
                 println!("{}", m);
             }
         }
-        return matched.pop().unwrap();
+        return matched.remove(0);
     }
 
+    fn depth(&self) -> usize {
+        return match env::var("JUMPER_DEPTH") {
+            Ok(v) => v.parse().unwrap(),
+            Err(err) => {
+                panic!("JUMPER_DEPTH variable is not set")
+            }
+        };
+    }
     fn workspace(&self) -> String {
         return match env::var("JUMPER_WORKSPACE") {
             Ok(v) => v,
