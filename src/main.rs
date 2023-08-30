@@ -11,6 +11,7 @@ use std::{
 struct Jumper {
     routes: String,
 }
+
 impl Jumper {
     fn default() -> Self {
         Jumper {
@@ -22,7 +23,7 @@ impl Jumper {
         let jumpers = self
             .load_routes()
             .expect("Could not load routes for jumper.");
-        if (!jumpers.is_null()) {
+        if !jumpers.is_null() {
             let path = &jumpers[dir];
             println!("{}", path);
             return path.to_string();
@@ -49,9 +50,9 @@ impl Jumper {
             let entry = entry.unwrap();
             let path = entry.path();
             let metadata = fs::metadata(&path).unwrap();
-            if (metadata.is_dir()) {
+            if metadata.is_dir() {
                 let filename = path.file_name().unwrap().to_str().unwrap();
-                if (dir.eq(filename)) {
+                if dir.eq(filename) {
                     matched.push(path.to_str().unwrap().to_string())
                 }
             }
@@ -71,12 +72,12 @@ impl Jumper {
     }
 
     fn workspace(&self) -> String {
-        match env::var("JUMPER_WORKSPACE") {
+        return match env::var("JUMPER_WORKSPACE") {
             Ok(v) => {
-                return v;
+                v
             }
             Err(err) => {
-                return panic!("JUMPER_WORKSPACE variable is not set");
+                panic!("JUMPER_WORKSPACE variable is not set")
             }
         }
     }
@@ -93,17 +94,17 @@ impl Jumper {
     fn load_routes(&self) -> Result<Value> {
         let filepath = Path::new(&self.home()).join(self.routes.as_str());
         println!("Filepath, {}", filepath.display());
-        match fs::read_to_string(&filepath) {
+        return match fs::read_to_string(&filepath) {
             Ok(value) => {
                 let json: serde_json::Value =
                     serde_json::from_str(&value).expect("JSON was not well-formatted");
-                return Ok(json);
+                Ok(json)
             }
             Err(err) => {
                 println!("Datastore file not existed, create a new one");
                 let mut file = fs::File::create(filepath).expect("Create routes.json file failed");
                 file.write_all(b"{}");
-                return Ok(serde_json::Value::String("{}".to_string()));
+                Ok(serde_json::Value::String("{}".to_string()))
             }
         }
     }
