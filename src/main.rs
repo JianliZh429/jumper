@@ -49,6 +49,9 @@ impl Jumper {
         }
         return "".to_string();
     }
+    pub fn add(&self, dir: &String, path: &String) -> std::io::Result<()> {
+        self.add_route(&dir, &path)
+    }
     pub fn shortcut(&self, shortcut: &str, filename: &str) -> Result<()> {
         return Ok(());
     }
@@ -150,11 +153,16 @@ fn main() {
     match command {
         "goto" => {
             let dir = &args[2];
-            jumper.goto(&dir);
+            jumper.goto(dir);
         }
         "assemble" => {
             let dir = &args[2];
-            jumper.assemble(&dir);
+            jumper.assemble(dir);
+        }
+        "add" => {
+            let dir = &args[2];
+            let path = &args[3];
+            jumper.add(dir, path);
         }
         _ => println!("Unrecognized command: {}", command),
     }
