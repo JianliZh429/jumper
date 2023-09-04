@@ -23,7 +23,9 @@ JUMPERRC="${JUMPER_HOME}/jumperrc"
 echo "export JUMPER_HOME=${JUMPER_HOME}
 export JUMPER_WORKSPACE=${JUMPER_WORKSPACE}
 export JUMPER_DEPTH=${JUMPER_DEPTH}
+export PATH=${PATH}:${JUMPER}
 alias j='. ${JUMPER_HOME}/jumper.sh'
+alias jadd='${JUMPER} add'
 alias jassemble='${JUMPER} assemble'
 alias jalias='${JUMPER} alias'
 " > "${JUMPERRC}"

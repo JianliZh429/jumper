@@ -29,31 +29,41 @@ impl Jumper {
         }
     }
 
-    pub fn goto(&self, dir: &String) -> String {
+    pub fn goto(&self, dir: &String) -> std::io::Result<(String)> {
         let jumpers = self
             .load_routes()
             .expect("Could not load routes for jumper.");
         if !jumpers.is_null() {
             let path = &jumpers[dir];
             println!("{}", path);
-            return path.to_string();
+            return Ok(path.to_string().clone());
         }
-        return "".to_string();
+        panic!("The target directory: {} is not registered. Please run assemble or add commands to register the directory and its path", dir);
     }
-    pub fn assemble(&self, dir: &String) -> String {
-        // let workspace = self.workspace();
+    pub fn assemble(&self, dir: &String) -> std::io::Result<(String)> {
         let path = self.find(&dir);
         if !path.is_empty() {
             self.add_route(&dir, &path);
-            return path;
+            return Ok(path.clone());
         }
-        return "".to_string();
+        panic!("Cannot find the target directory: {}", dir);
     }
-    pub fn add(&self, dir: &String, path: &String) -> std::io::Result<()> {
-        self.add_route(&dir, &path)
+    pub fn add(&self, dir: &String, path: &String) -> std::io::Result<(String)> {
+        self.add_route(&dir, &path);
+        return Ok(format!("Register directory: {} with path: {}", dir, path));
     }
-    pub fn shortcut(&self, shortcut: &str, filename: &str) -> Result<()> {
-        return Ok(());
+
+    pub fn alias(&self, shortcut: &String, dir: &String) -> std::io::Result<(String)> {
+        let routes = self.load_routes().expect("Failed to load routes");
+        let path = routes.get(dir);
+        if path.is_some() {
+            self.add_route(shortcut, &path.unwrap().as_str().unwrap().to_string());
+            return Ok(path.unwrap().to_string().clone());
+        }
+        panic!(
+            "{} is not a unknown directory. Please run assemble or add commands to register the directory and its path",
+            dir
+        );
     }
 
     fn find(&self, dir: &String) -> String {
@@ -163,6 +173,11 @@ fn main() {
             let dir = &args[2];
             let path = &args[3];
             jumper.add(dir, path);
+        }
+        "alias" => {
+            let alias = &args[2];
+            let dir = &args[3];
+            jumper.alias(alias, dir);
         }
         _ => println!("Unrecognized command: {}", command),
     }
