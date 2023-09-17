@@ -103,6 +103,7 @@ impl Jumper {
             println!("Can not find '{}' in '{}'", dir, workspace);
             return "".to_string();
         } else if matched.len() > 1 {
+            matched.sort();
             println!(
                 "Found multiple matches, will choose the first one. You can manually add others if needed.",
             );
