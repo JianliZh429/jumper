@@ -33,12 +33,22 @@ impl Jumper {
         let jumpers = self
             .load_routes()
             .expect("Could not load routes for jumper.");
-        if !jumpers.is_null() {
-            let path = &jumpers[dir];
-            println!("{}", path);
-            return Ok(path.to_string().clone());
+        if jumpers.is_null() {
+            panic!("Failed to load routes!");
         }
-        panic!("The target directory: {} is not registered. Please run assemble or add commands to register the directory and its path", dir);
+        let path = jumpers.get(dir);
+        if path.is_some() {
+            println!("{}", path.unwrap());
+            return Ok(path.unwrap().to_string().clone());
+        }
+        println!("Target directory is not regiestered, try to assemble...");
+        let assembled = self.assemble(dir);
+        if !assembled.is_ok() {
+            panic!("Target directory is not registered and failed to assemble it. Please make sure the directory name is correct");
+        }
+        let path = assembled.unwrap();
+        println!("{}", path);
+        return Ok(path.to_string().clone());
     }
     pub fn assemble(&self, dir: &String) -> std::io::Result<(String)> {
         let path = self.find(&dir);
