@@ -24,12 +24,12 @@ function jump() {
     echo -e "GOTO $JUMPER_WORKSPACE"
     cd "${JUMPER_WORKSPACE}"
   else
-    if [ "${target}" == "--help" ]; then
+    if [[ "${target}" == "--help" ]]; then
         help
         exit 0
     fi
     JUMPER=$JUMPER_HOME/jumper
-    FIRST_DIR=$($JUMPER goto "$1" | tr -d '"')
+    FIRST_DIR=$($JUMPER goto "${target}" | tr -d '"')
     
     if (( $(grep -c . <<<"${FIRST_DIR}") > 1 )); then
       echo -e "${FIRST_DIR}\n"
