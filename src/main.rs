@@ -7,7 +7,7 @@ use std::path::Path;
 use jumper::jumper::Jumper;
 
 #[derive(Debug, Parser)]
-#[command(name = "jumper", version, about = "Jump between directories by name")] 
+#[command(name = "jumper", version, about = "Jump between directories by name")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,

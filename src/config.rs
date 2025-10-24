@@ -16,7 +16,9 @@ impl Config {
     pub fn load() -> Result<Self> {
         let base = BaseDirs::new().context("Could not determine home directory")?;
         let default_home = base.home_dir().join(".jumper");
-        let home = env::var("JUMPER_HOME").map(PathBuf::from).unwrap_or(default_home);
+        let home = env::var("JUMPER_HOME")
+            .map(PathBuf::from)
+            .unwrap_or(default_home);
         let default_workspace = base.home_dir().to_path_buf();
         let workspace = env::var("JUMPER_WORKSPACE")
             .map(PathBuf::from)
@@ -31,8 +33,8 @@ impl Config {
         if cfg_path.exists() {
             let s = fs::read_to_string(&cfg_path)
                 .with_context(|| format!("reading {}", cfg_path.display()))?;
-            let file_cfg: PartialConfig = toml::from_str(&s)
-                .with_context(|| format!("parsing {}", cfg_path.display()))?;
+            let file_cfg: PartialConfig =
+                toml::from_str(&s).with_context(|| format!("parsing {}", cfg_path.display()))?;
             return Ok(Config {
                 home: file_cfg.home.unwrap_or(home),
                 workspace: file_cfg.workspace.unwrap_or(workspace),

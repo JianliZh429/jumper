@@ -28,7 +28,9 @@ pub struct Store {
 
 impl Store {
     pub fn new(home: &Path) -> Self {
-        Self { file: home.join("routes.json") }
+        Self {
+            file: home.join("routes.json"),
+        }
     }
 
     pub fn load(&self) -> Result<RouteStore> {
@@ -42,9 +44,8 @@ impl Store {
         }
         let f = File::open(&self.file).with_context(|| format!("open {}", self.file.display()))?;
         let reader = BufReader::new(f);
-        let store: RouteStore = serde_json::from_reader(reader).with_context(|| {
-            format!("parse JSON in {}", self.file.display())
-        })?;
+        let store: RouteStore = serde_json::from_reader(reader)
+            .with_context(|| format!("parse JSON in {}", self.file.display()))?;
         Ok(store)
     }
 

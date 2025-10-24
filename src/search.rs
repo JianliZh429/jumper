@@ -29,7 +29,10 @@ pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> 
             !is_hidden(e) && !skip_dir(&fname)
         })
     {
-        let entry = match entry { Ok(e) => e, Err(_) => continue };
+        let entry = match entry {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
         let path = entry.path();
         if let Ok(metadata) = fs::metadata(path) {
             if metadata.is_dir() {
