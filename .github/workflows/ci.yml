@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry and build
+        uses: Swatinem/rust-cache@v2
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Build
+        run: cargo build --locked --all-targets
+
+      - name: Test
+        run: cargo test --locked --all-targets
+
+      - name: Build release
+        run: cargo build --locked --release
+
+      - name: Package artifacts (tar.gz)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BIN=target/release/jumper
+          test -f "$BIN"
+          mkdir -p pkg artifacts
+          cp "$BIN" pkg/jumper
+          cp install.sh pkg/install.sh
+          cp jumper.sh pkg/jumper.sh
+          chmod +x pkg/jumper pkg/install.sh pkg/jumper.sh
+          ARCHIVE="jumper-${{ runner.os }}-${{ runner.arch }}.tar.gz"
+          tar -C pkg -zcvf "artifacts/${ARCHIVE}" jumper install.sh jumper.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jumper-${{ runner.os }}-${{ runner.arch }}
+          path: artifacts/*.tar.gz
+          if-no-files-found: error
