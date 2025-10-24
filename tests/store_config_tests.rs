@@ -1,9 +1,7 @@
-use std::fs;
-use std::path::PathBuf;
 use tempfile::tempdir;
 
 use jumper::config::Config;
-use jumper::store::{RouteStore, Store};
+use jumper::store::Store;
 
 #[test]
 fn config_defaults() {
