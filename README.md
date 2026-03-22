@@ -38,6 +38,8 @@ The installer defines helpful aliases:
 - `jadd`     — register a name to a path
 - `jassemble`— discover a folder by name under your workspace and register it
 - `jalias`   — create an alias pointing at an existing registered name
+- `jlist`    — list all registered directories
+- `jremove`  — remove a registered name or alias
 
 Examples:
 ```
@@ -55,6 +57,24 @@ jassemble frontend
 
 # add a short alias for an existing name
 jalias fe frontend
+
+# list all registered directories
+jlist
+
+# remove a registration
+jremove fe
+```
+
+Generate shell completions:
+```
+# bash
+jumper completions bash >> ~/.local/share/bash-completion/completions/jumper
+
+# zsh
+jumper completions zsh > "${fpath[1]}/_jumper"
+
+# fish
+jumper completions fish > ~/.config/fish/completions/jumper.fish
 ```
 Behavior notes:
 - If multiple directories match during assemble, all matches are printed and the first (sorted) is chosen.
@@ -70,6 +90,19 @@ To customize, edit `~/.jumper/jumperrc`, then reload your shell:
 ```
 exec "$SHELL" -l
 ```
+
+### Configuration File
+
+You can also create a `config.toml` file in `~/.jumper/` for persistent configuration:
+
+```toml
+# ~/.jumper/config.toml
+home = "~/.jumper"
+workspace = "~/projects"
+depth = 5
+```
+
+**Priority order:** environment variables > `config.toml` > defaults
 
 ## Data store
 Mappings are saved as JSON in `$JUMPER_HOME/routes.json`, e.g.:

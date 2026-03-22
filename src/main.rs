@@ -1,7 +1,9 @@
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{CommandFactory, Parser, Subcommand};
+use clap_complete::{generate, Shell};
 use env_logger::Env;
 use log::error;
+use std::io;
 use std::path::Path;
 
 use jumper::jumper::Jumper;
@@ -21,6 +23,8 @@ enum Commands {
     Alias { alias: String, name: String },
     List,
     Remove { name: String },
+    /// Generate shell completion script
+    Completions { shell: Shell },
 }
 
 fn main() {
@@ -64,6 +68,10 @@ fn run() -> Result<()> {
         Commands::Remove { name } => {
             let msg = j.remove(&name)?;
             println!("{}", msg);
+        }
+        Commands::Completions { shell } => {
+            let mut cmd = Cli::command();
+            generate(shell, &mut cmd, "jumper", &mut io::stdout());
         }
     }
     Ok(())
