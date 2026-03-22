@@ -19,6 +19,8 @@ enum Commands {
     Assemble { name: String },
     Add { name: String, path: String },
     Alias { alias: String, name: String },
+    List,
+    Remove { name: String },
 }
 
 fn main() {
@@ -48,6 +50,20 @@ fn run() -> Result<()> {
         Commands::Alias { alias, name } => {
             let p = j.alias(&alias, &name)?;
             println!("{}", p.display());
+        }
+        Commands::List => {
+            let entries = j.list()?;
+            if entries.is_empty() {
+                println!("No registered directories");
+            } else {
+                for (name, path) in entries {
+                    println!("{:<15} -> {}", name, path);
+                }
+            }
+        }
+        Commands::Remove { name } => {
+            let msg = j.remove(&name)?;
+            println!("{}", msg);
         }
     }
     Ok(())

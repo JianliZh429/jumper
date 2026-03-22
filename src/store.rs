@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct RouteStore {
     #[serde(flatten)]
-    routes: BTreeMap<String, String>,
+    pub routes: BTreeMap<String, String>,
 }
 
 impl RouteStore {

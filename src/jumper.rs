@@ -62,4 +62,20 @@ impl Jumper {
         self.store.save(&store)?;
         Ok(PathBuf::from(target))
     }
+
+    pub fn list(&self) -> Result<Vec<(String, String)>> {
+        let store = self.store.load()?;
+        let mut entries: Vec<(String, String)> = store.routes.into_iter().collect();
+        entries.sort_by(|a, b| a.0.cmp(&b.0));
+        Ok(entries)
+    }
+
+    pub fn remove(&self, name: &str) -> Result<String> {
+        let mut store = self.store.load()?;
+        if store.routes.remove(name).is_none() {
+            return Err(anyhow!("'{}' is not registered", name));
+        }
+        self.store.save(&store)?;
+        Ok(format!("Removed '{}'", name))
+    }
 }
