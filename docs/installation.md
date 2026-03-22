@@ -98,7 +98,12 @@ exec "$SHELL" -l
 2. **Build the binary**
 
    ```bash
+   # Quick build (recommended)
+   ./build.sh
+   
+   # Or manual build
    cargo build --release
+   cp target/release/jumper ./jumper
    ```
 
 3. **Run the installer**
