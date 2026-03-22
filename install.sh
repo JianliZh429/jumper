@@ -89,7 +89,7 @@ else
     echo "  Architecture: $ARCH"
     
     if [[ "$OS" != "unknown" && "$ARCH" != "unknown" ]]; then
-        DOWNLOAD_URL="https://github.com/yixun/jumper/releases/latest/download/jumper-${OS}-${ARCH}.tar.gz"
+        DOWNLOAD_URL="https://github.com/JianliZh429/jumper/releases/latest/download/jumper-${OS}-${ARCH}.tar.gz"
         TMPDIR=$(mktemp -d)
         trap 'rm -rf "$TMPDIR"' EXIT
         
@@ -114,7 +114,7 @@ else
     if [[ ! -f "$JUMPER_HOME/jumper" ]]; then
         echo_warn "Pre-built binary not available, trying cargo install..."
         if command -v cargo &> /dev/null; then
-            cargo install --git https://github.com/yixun/jumper.git --force 2>/dev/null && {
+            cargo install --git https://github.com/JianliZh429/jumper.git --force 2>/dev/null && {
                 # Find where cargo installed it
                 CARGO_BIN="$(cargo install --list | grep jumper | head -1 | awk '{print $2}' | tr -d 'v0-9.')"
                 if [[ -n "$CARGO_BIN" ]]; then
@@ -123,7 +123,7 @@ else
                 echo_info "Installed via cargo"
             } || {
                 echo_error "Cargo install failed. Please install manually:"
-                echo "  cargo install --git https://github.com/yixun/jumper.git"
+                echo "  cargo install --git https://github.com/JianliZh429/jumper.git"
                 exit 1
             }
         else
@@ -165,7 +165,7 @@ Examples:
   jadd blog ~/work/blog
   jlist
 
-For more information: https://github.com/yixun/jumper
+For more information: https://github.com/JianliZh429/jumper
 HELP
 }
 

@@ -36,7 +36,7 @@ For detailed guides, see the [Documentation](docs/README.md):
 ### One-Liner Install (Recommended)
 
 ```bash
-curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+curl -fsSL https://github.com/JianliZh429/jumper/releases/latest/download/install.sh | bash
 exec "$SHELL" -l
 ```
 
@@ -44,14 +44,14 @@ exec "$SHELL" -l
 
 ```bash
 # Homebrew (macOS)
-brew tap yixun/jumper https://github.com/yixun/jumper.git
+brew tap JianliZh429/jumper https://github.com/JianliZh429/jumper.git
 brew install jumper
 
 # Cargo
-cargo install --git https://github.com/yixun/jumper.git
+cargo install --git https://github.com/JianliZh429/jumper.git
 
 # Build from source
-git clone https://github.com/yixun/jumper.git
+git clone https://github.com/JianliZh429/jumper.git
 cd jumper
 ./build.sh        # Quick build
 ./install.sh      # Install
