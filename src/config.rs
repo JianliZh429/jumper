@@ -5,6 +5,10 @@ use std::env;
 use std::fs;
 use std::path::PathBuf;
 
+/// Configuration for Jumper.
+///
+/// Contains the home directory for storing data, the workspace directory
+/// to search, and the maximum depth for recursive searches.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub home: PathBuf,
@@ -13,6 +17,9 @@ pub struct Config {
 }
 
 impl Config {
+    /// Load configuration from environment variables or config file.
+    ///
+    /// Priority order: environment variables > config.toml > defaults.
     pub fn load() -> Result<Self> {
         let base = BaseDirs::new().context("Could not determine home directory")?;
         let default_home = base.home_dir().join(".jumper");

@@ -1,108 +1,188 @@
 # Jumper
 
-A small CLI that lets you “jump” to directories by name. It keeps a persistent map of names -> absolute paths and can auto-discover folders in your workspace.
+A CLI tool for quickly navigating between directories by name. Jump to your projects with short, memorable names instead of long paths.
 
-- Jump by name with `j <name>`
-- Auto-assemble a name by scanning your workspace up to a configurable depth
-- Manually add or alias names
+```bash
+# Jump to a registered directory
+j my-project
 
-## Requirements
-- macOS or Linux (bash/zsh)
-- Rust toolchain (for building from source): https://www.rust-lang.org/tools/install
-- Optional for packaging: cross linker for Linux target (`x86_64-unknown-linux-gnu-gcc`)
+# Register a new directory
+jadd my-project ~/projects/my-app
 
-## Quick start
-1) Build the binary
-```
-# from repo root
-cargo build --release
-cp target/release/jumper ./jumper
-chmod +x ./jumper
+# List all registered directories
+jlist
 ```
 
-2) Install shell integration and defaults
+## 📚 Documentation
+
+For detailed guides, see the [Documentation](docs/README.md):
+
+- **[Installation Guide](docs/installation.md)** - Install and set up Jumper
+- **[Usage Guide](docs/usage.md)** - Commands and examples
+- **[Configuration Guide](docs/configuration.md)** - Customize Jumper
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+
+## ✨ Features
+
+- **Jump by Name** - Navigate with `j <name>` instead of `cd /long/path`
+- **Auto-Discovery** - Find directories automatically with `jassemble`
+- **Aliases** - Create shortcuts with `jalias`
+- **Persistent Storage** - Your mappings are saved between sessions
+- **Shell Integration** - Seamless integration with bash/zsh
+- **Shell Completions** - Tab completion for all commands
+
+## 🚀 Quick Start
+
+### One-Liner Install (Recommended)
+
+```bash
+curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+exec "$SHELL" -l
 ```
+
+### Other Installation Methods
+
+```bash
+# Homebrew (macOS)
+brew tap yixun/jumper https://github.com/yixun/jumper.git
+brew install jumper
+
+# Cargo
+cargo install --git https://github.com/yixun/jumper.git
+
+# Build from source
+git clone https://github.com/yixun/jumper.git
+cd jumper && cargo build --release
 ./install.sh
-# reload your shell so aliases and env vars take effect
-exec "$SHELL" -l
 ```
 
-3) Verify
-```
-j --help
-```
+For detailed installation instructions, see the [Installation Guide](docs/installation.md).
 
-## Usage
-The installer defines helpful aliases:
-- `j`        — jump; with no args it goes to your workspace base
-- `jadd`     — register a name to a path
-- `jassemble`— discover a folder by name under your workspace and register it
-- `jalias`   — create an alias pointing at an existing registered name
+## 📖 Usage
 
-Examples:
-```
-# go to workspace root
-j
+### Basic Commands
 
-# jump to folder named "my-service" (registered or auto-discovered)
-j my-service
+| Command | Aliases | Description | Example |
+|---------|---------|-------------|---------|
+| `jumper goto <name>` | `g` | Jump to a directory | `j my-project` |
+| `jumper goto` | - | Jump to workspace root | `j` |
+| `jumper add <name> <path>` | `add` | Register a directory | `jadd blog ~/work/blog` |
+| `jumper assemble <name>` | `a` | Find and register | `jassemble frontend` |
+| `jumper alias <short> <name>` | `al` | Create an alias | `jalias fe frontend` |
+| `jumper list` | `ls` | List all registrations | `jlist` |
+| `jumper remove <name>` | `rm` | Remove a registration | `jremove old-project` |
+| `jumper completions <shell>` | - | Generate shell completions | `jumper completions bash` |
 
-# manually register a directory
-jadd blog /Users/me/work/blog
+**Note:** The shell aliases (`j`, `jadd`, `jassemble`, etc.) are set up automatically during installation.
 
-# scan workspace for a directory named "frontend" and register it
-jassemble frontend
+### Example Workflow
 
-# add a short alias for an existing name
+```bash
+# Register your projects
+jadd frontend ~/projects/my-app/frontend
+jadd backend ~/projects/my-app/api
+
+# Jump between them
+j frontend
+# ... work on frontend ...
+j backend
+# ... work on backend ...
+
+# Create short aliases
 jalias fe frontend
-```
-Behavior notes:
-- If multiple directories match during assemble, all matches are printed and the first (sorted) is chosen.
-- Errors occur if required environment variables are not set; the installer configures them for you.
+jalias be backend
+j fe  # Now you can use the short name
 
-## Configuration
-Jumper uses the following environment variables (created by the installer in `~/.jumper/jumperrc`):
-- `JUMPER_HOME`      — where Jumper stores its files (default: `~/.jumper`)
-- `JUMPER_WORKSPACE` — base directory to search when assembling (default: `$HOME`)
-- `JUMPER_DEPTH`     — max recursive depth when assembling (default: `4`)
-
-To customize, edit `~/.jumper/jumperrc`, then reload your shell:
-```
-exec "$SHELL" -l
+# List all registrations
+jlist
 ```
 
-## Data store
-Mappings are saved as JSON in `$JUMPER_HOME/routes.json`, e.g.:
+## ⚙️ Configuration
+
+Jumper uses these environment variables (set by installer in `~/.jumper/jumperrc`):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `JUMPER_HOME` | `~/.jumper` | Data storage directory |
+| `JUMPER_WORKSPACE` | `$HOME` | Base directory for search |
+| `JUMPER_DEPTH` | `4` | Max search depth |
+
+You can also create `~/.jumper/config.toml`:
+
+```toml
+# ~/.jumper/config.toml
+workspace = "~/projects"
+depth = 5
 ```
+
+**Priority:** environment variables > config.toml > defaults
+
+## 📦 Data Storage
+
+Mappings are saved as JSON in `$JUMPER_HOME/routes.json`:
+
+```json
 {
-  "blog": "/Users/me/work/blog",
-  "fe": "/Users/me/work/frontend",
-  "frontend": "/Users/me/work/frontend"
+  "backend": "/Users/me/projects/api",
+  "fe": "/Users/me/projects/frontend",
+  "frontend": "/Users/me/projects/frontend"
 }
 ```
+
 Delete this file to reset all registrations.
 
-## Build and package
-Build natively:
-```
+## 🛠️ Development
+
+### Build
+
+```bash
 cargo build --release
 ```
-Create tarballs for macOS and Linux (requires cross linker for Linux):
+
+### Test
+
+```bash
+cargo test
 ```
+
+### Format & Lint
+
+```bash
+cargo fmt
+cargo clippy --all-targets -- -D warnings
+```
+
+### Package
+
+Create distributable tarballs (requires cross-linker for Linux):
+
+```bash
 ./package.sh
 # artifacts in target/jumper-*.tar.gz
 ```
-Each archive contains: `jumper` (binary), `install.sh`, and `jumper.sh`.
 
-## Troubleshooting
-- “JUMPER_* variable is not set”: ensure your shell sourced `~/.jumper/jumperrc` (relaunch or `exec "$SHELL" -l`).
-- “not a valid directory”: ensure the target exists or register it with `jadd`.
-- On first run Jumper will create an empty `routes.json` automatically.
+## 📋 Requirements
 
-## Development
-Useful commands:
-```
-cargo fmt
-cargo clippy -- -D warnings
-cargo test
-```
+- **OS:** macOS or Linux
+- **Shell:** bash or zsh
+- **Rust:** For building from source ([install](https://www.rust-lang.org/tools/install))
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `cargo test`
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details.
+
+## 🔗 Links
+
+- [Full Documentation](docs/README.md)
+- [Installation Guide](docs/installation.md)
+- [Usage Guide](docs/usage.md)
+- [Configuration Guide](docs/configuration.md)
+- [Troubleshooting](docs/troubleshooting.md)

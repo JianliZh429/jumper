@@ -2,6 +2,11 @@
 name = "jumper"
 version = "0.1.0"
 edition = "2021"
+description = "A CLI tool for quickly navigating between directories by name"
+license = "MIT"
+repository = "https://github.com/yixun/jumper"
+keywords = ["cli", "directory", "navigation", "productivity"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,6 +14,7 @@ edition = "2021"
 anyhow = "1"
 thiserror = "1"
 clap = { version = "4.4", features = ["derive"] }
+clap_complete = "4.4"
 log = "0.4"
 env_logger = "0.10"
 serde = { version = "1", features = ["derive"] }
