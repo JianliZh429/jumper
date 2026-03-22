@@ -54,14 +54,12 @@ impl Jumper {
     }
 
     pub fn alias(&self, alias: &str, name: &str) -> Result<PathBuf> {
-        let store = self.store.load()?;
+        let mut store = self.store.load()?;
         let Some(target) = store.get(name).map(|s| s.to_string()) else {
             return Err(anyhow!("'{}' is not registered", name));
         };
-        // write new alias
-        let mut store2 = self.store.load()?;
-        store2.set(alias.to_string(), target.clone());
-        self.store.save(&store2)?;
+        store.set(alias.to_string(), target.clone());
+        self.store.save(&store)?;
         Ok(PathBuf::from(target))
     }
 }
