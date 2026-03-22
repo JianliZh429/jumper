@@ -52,8 +52,9 @@ cargo install --git https://github.com/yixun/jumper.git
 
 # Build from source
 git clone https://github.com/yixun/jumper.git
-cd jumper && cargo build --release
-./install.sh
+cd jumper
+./build.sh        # Quick build
+./install.sh      # Install
 ```
 
 For detailed installation instructions, see the [Installation Guide](docs/installation.md).
