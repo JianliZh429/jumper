@@ -4,6 +4,10 @@ use crate::store::Store;
 use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
 
+/// Jumper is the main entry point for directory jumping.
+///
+/// It maintains a persistent store of name -> path mappings and provides
+/// methods to navigate, register, and manage directory shortcuts.
 #[derive(Debug)]
 pub struct Jumper {
     cfg: Config,
@@ -11,12 +15,17 @@ pub struct Jumper {
 }
 
 impl Jumper {
+    /// Creates a new Jumper instance by loading configuration and store.
     pub fn new() -> Result<Self> {
         let cfg = Config::load()?;
         let store = Store::new(&cfg.home);
         Ok(Self { cfg, store })
     }
 
+    /// Jump to a directory by name.
+    ///
+    /// First checks the registered store, then falls back to assembling
+    /// (searching the workspace) if not found.
     pub fn goto(&self, name: &str) -> Result<PathBuf> {
         let store = self.store.load()?;
         if let Some(p) = store.get(name) {
@@ -26,6 +35,10 @@ impl Jumper {
         self.assemble(name)
     }
 
+    /// Assemble a directory path by searching the workspace.
+    ///
+    /// Searches for directories matching the given name within the configured
+    /// workspace depth, registers the first match, and returns its path.
     pub fn assemble(&self, name: &str) -> Result<PathBuf> {
         let matches = search::find(&self.cfg.workspace, self.cfg.depth, name)?;
         if matches.is_empty() {
@@ -43,6 +56,7 @@ impl Jumper {
         Ok(chosen)
     }
 
+    /// Register a new directory with the given name.
     pub fn add(&self, name: &str, path: &Path) -> Result<String> {
         if !path.is_dir() {
             return Err(anyhow!("{} is not a directory", path.display()));
@@ -53,6 +67,7 @@ impl Jumper {
         Ok(format!("Registered '{}' -> {}", name, path.display()))
     }
 
+    /// Create an alias for an existing registered name.
     pub fn alias(&self, alias: &str, name: &str) -> Result<PathBuf> {
         let mut store = self.store.load()?;
         let Some(target) = store.get(name).map(|s| s.to_string()) else {
@@ -63,6 +78,9 @@ impl Jumper {
         Ok(PathBuf::from(target))
     }
 
+    /// List all registered directory mappings.
+    ///
+    /// Returns a sorted vector of (name, path) tuples.
     pub fn list(&self) -> Result<Vec<(String, String)>> {
         let store = self.store.load()?;
         let mut entries: Vec<(String, String)> = store.routes.into_iter().collect();
@@ -70,6 +88,7 @@ impl Jumper {
         Ok(entries)
     }
 
+    /// Remove a registered name or alias.
     pub fn remove(&self, name: &str) -> Result<String> {
         let mut store = self.store.load()?;
         if store.routes.remove(name).is_none() {

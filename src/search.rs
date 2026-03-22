@@ -3,6 +3,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
 
+/// Check if a directory entry is hidden (starts with a dot).
 fn is_hidden(entry: &DirEntry) -> bool {
     entry
         .file_name()
@@ -11,6 +12,7 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
+/// Check if a directory should be skipped during search.
 fn skip_dir(name: &str) -> bool {
     matches!(
         name,
@@ -18,6 +20,11 @@ fn skip_dir(name: &str) -> bool {
     )
 }
 
+/// Find all directories matching the given name within the workspace.
+///
+/// Searches recursively up to the specified depth, excluding hidden directories
+/// and common non-essential directories (e.g., .git, node_modules, target).
+/// Returns a sorted vector of matching paths.
 pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> {
     let mut matched = Vec::new();
     for entry in WalkDir::new(workspace)
