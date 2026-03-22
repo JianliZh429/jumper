@@ -2,18 +2,43 @@
 
 This guide explains how to use Jumper's commands for efficient directory navigation.
 
-## Basic Commands
+## Getting Help
 
-### Jump to a Directory (`j`)
-
-The `j` command is your primary way to navigate.
+View help for any command:
 
 ```bash
-# Jump to a registered directory
-j <name>
+# General help
+jumper --help
+jumper -h
 
-# Jump to workspace root (no arguments)
-j
+# Help for specific command
+jumper goto --help
+jumper add --help
+jumper list -h
+```
+
+## Basic Commands
+
+### Jump to a Directory (`goto`)
+
+Jump to a registered directory by name:
+
+```bash
+jumper goto <name>
+jumper g <name>      # Short alias
+```
+
+Or use the shell alias:
+
+```bash
+j <name>
+```
+
+**Jump to workspace root** (no arguments):
+
+```bash
+jumper goto
+j                    # Shell alias jumps to workspace root
 ```
 
 **Examples:**

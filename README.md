@@ -62,15 +62,18 @@ For detailed installation instructions, see the [Installation Guide](docs/instal
 
 ### Basic Commands
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `j <name>` | Jump to a directory | `j my-project` |
-| `j` | Jump to workspace root | `j` |
-| `jadd <name> <path>` | Register a directory | `jadd blog ~/work/blog` |
-| `jassemble <name>` | Find and register | `jassemble frontend` |
-| `jalias <short> <name>` | Create an alias | `jalias fe frontend` |
-| `jlist` | List all registrations | `jlist` |
-| `jremove <name>` | Remove a registration | `jremove old-project` |
+| Command | Aliases | Description | Example |
+|---------|---------|-------------|---------|
+| `jumper goto <name>` | `g` | Jump to a directory | `j my-project` |
+| `jumper goto` | - | Jump to workspace root | `j` |
+| `jumper add <name> <path>` | `add` | Register a directory | `jadd blog ~/work/blog` |
+| `jumper assemble <name>` | `a` | Find and register | `jassemble frontend` |
+| `jumper alias <short> <name>` | `al` | Create an alias | `jalias fe frontend` |
+| `jumper list` | `ls` | List all registrations | `jlist` |
+| `jumper remove <name>` | `rm` | Remove a registration | `jremove old-project` |
+| `jumper completions <shell>` | - | Generate shell completions | `jumper completions bash` |
+
+**Note:** The shell aliases (`j`, `jadd`, `jassemble`, etc.) are set up automatically during installation.
 
 ### Example Workflow
 

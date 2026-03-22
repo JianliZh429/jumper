@@ -111,31 +111,70 @@ else
     echo_warn "jumper.sh not found in archive, creating default..."
     cat > "$JUMPER_HOME/jumper.sh" << 'JUMPER_SH'
 #! /bin/bash
+# Jumper shell wrapper - enables cd functionality
+
+function j_help() {
+    cat << 'HELP'
+Jumper - Directory navigation tool
+
+Usage:
+  j              Jump to workspace root
+  j <name>       Jump to a registered directory
+  j --help       Show this help message
+
+Shell aliases (set up by installer):
+  j              - Jump to directory
+  jadd           - Register a directory (jumper add)
+  jassemble      - Find and register (jumper assemble)
+  jalias         - Create alias (jumper alias)
+  jlist          - List all registrations (jumper list)
+  jremove        - Remove registration (jumper remove)
+
+Examples:
+  j              # Jump to workspace root
+  j my-project   # Jump to registered directory
+  jadd blog ~/work/blog
+  jlist
+
+For more information: https://github.com/yixun/jumper
+HELP
+}
+
 function jump() {
-  target=$1
-  if [ -z "${target}" ]; then
-    echo -e "GOTO $JUMPER_WORKSPACE"
-    cd "${JUMPER_WORKSPACE}"
+  local target="$1"
+  local JUMPER="${JUMPER_HOME:-$HOME/.jumper}/jumper"
+  local target_dir
+
+  if [[ "${target}" == "--help" || "${target}" == "-h" || "${target}" == "help" ]]; then
+    j_help
+    return 0
+  fi
+
+  if [[ -z "${target}" ]]; then
+    target_dir="${JUMPER_WORKSPACE:-$HOME}"
+    echo "GOTO: $target_dir"
+    cd "$target_dir" || return 1
+    return 0
+  fi
+
+  target_dir=$("$JUMPER" goto "$target" 2>&1)
+  local exit_code=$?
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "Error: $target_dir" >&2
+    return 1
+  fi
+
+  if [[ -d "$target_dir" ]]; then
+    echo "GOTO: $target_dir"
+    cd "$target_dir" || return 1
   else
-    if [[ "${target}" == "--help" ]]; then
-        echo "Usage: j <directory-name>"
-    else
-        JUMPER=$JUMPER_HOME/jumper
-        FIRST_DIR=$($JUMPER goto "${target}" | tr -d '"')
-        if (( $(grep -c . <<<"${FIRST_DIR}") > 1 )); then
-            echo -e "${FIRST_DIR}\n"
-        fi
-        FIRST_DIR=$(echo "${FIRST_DIR}" | tail -n 1)
-        echo -e "GOTO: $FIRST_DIR"
-        if [[ -d $FIRST_DIR ]]; then
-            cd "$FIRST_DIR"
-        else
-            echo -e "\n$FIRST_DIR is not a valid directory"
-        fi
-    fi
+    echo "Error: '$target_dir' is not a valid directory" >&2
+    return 1
   fi
 }
-jump "$1"
+
+jump "$@"
 JUMPER_SH
     chmod +x "$JUMPER_HOME/jumper.sh"
 fi
