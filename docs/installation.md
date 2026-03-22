@@ -10,7 +10,7 @@ The easiest way to install Jumper:
 
 ```bash
 # macOS and Linux
-curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+curl -fsSL https://github.com/JianliZh429/jumper/releases/latest/download/install.sh | bash
 ```
 
 Then reload your shell:
@@ -27,13 +27,13 @@ Download and install automatically:
 
 ```bash
 # Using curl
-curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+curl -fsSL https://github.com/JianliZh429/jumper/releases/latest/download/install.sh | bash
 
 # Using wget
-wget -qO- https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+wget -qO- https://github.com/JianliZh429/jumper/releases/latest/download/install.sh | bash
 
 # Specify version
-VERSION=v0.1.0 curl -fsSL https://github.com/yixun/jumper/releases/download/$VERSION/install.sh | bash
+VERSION=v0.1.0 curl -fsSL https://github.com/JianliZh429/jumper/releases/download/$VERSION/install.sh | bash
 ```
 
 **What it does:**
@@ -46,7 +46,7 @@ VERSION=v0.1.0 curl -fsSL https://github.com/yixun/jumper/releases/download/$VER
 
 ```bash
 # Add the tap
-brew tap yixun/jumper https://github.com/yixun/jumper.git
+brew tap JianliZh429/jumper https://github.com/JianliZh429/jumper.git
 
 # Install
 brew install jumper
@@ -58,7 +58,7 @@ brew install jumper
 
 ```bash
 # Install from git repository
-cargo install --git https://github.com/yixun/jumper.git
+cargo install --git https://github.com/JianliZh429/jumper.git
 
 # Then set up shell integration
 mkdir -p ~/.jumper
@@ -91,7 +91,7 @@ exec "$SHELL" -l
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yixun/jumper.git
+   git clone https://github.com/JianliZh429/jumper.git
    cd jumper
    ```
 
@@ -119,10 +119,10 @@ exec "$SHELL" -l
 
    ```bash
    # macOS
-   curl -LO https://github.com/yixun/jumper/releases/latest/download/jumper-macOS-x86_64.tar.gz
+   curl -LO https://github.com/JianliZh429/jumper/releases/latest/download/jumper-macOS-x86_64.tar.gz
    
    # Linux
-   curl -LO https://github.com/yixun/jumper/releases/latest/download/jumper-Linux-x86_64.tar.gz
+   curl -LO https://github.com/JianliZh429/jumper/releases/latest/download/jumper-Linux-x86_64.tar.gz
    ```
 
 2. **Extract and install**
@@ -197,7 +197,7 @@ To remove Jumper completely:
 ### Using the Uninstall Script
 
 ```bash
-curl -fsSL https://github.com/yixun/jumper/releases/latest/download/uninstall.sh | bash
+curl -fsSL https://github.com/JianliZh429/jumper/releases/latest/download/uninstall.sh | bash
 ```
 
 ### Manual Uninstall
@@ -223,5 +223,5 @@ curl -fsSL https://github.com/yixun/jumper/releases/latest/download/uninstall.sh
 
 ```bash
 brew uninstall jumper
-brew untap yixun/jumper
+brew untap JianliZh429/jumper
 ```

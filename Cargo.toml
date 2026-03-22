@@ -4,7 +4,7 @@ version = "0.1.1"
 edition = "2021"
 description = "A CLI tool for quickly navigating between directories by name"
 license = "MIT"
-repository = "https://github.com/yixun/jumper"
+repository = "https://github.com/JianliZh429/jumper"
 keywords = ["cli", "directory", "navigation", "productivity"]
 categories = ["command-line-utilities"]
 

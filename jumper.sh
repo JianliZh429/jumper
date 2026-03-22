@@ -25,7 +25,7 @@ Examples:
   jadd blog ~/work/blog
   jlist
 
-For more information: https://github.com/yixun/jumper
+For more information: https://github.com/JianliZh429/jumper
 HELP
 }
 

@@ -21,7 +21,7 @@ use jumper::jumper::Jumper;
                     j <name>       - Jump to a registered directory\n  \
                     jadd <name> <path> - Register a new directory\n  \
                     jlist          - List all registered directories\n\n\
-                  For more information, see: https://github.com/yixun/jumper"
+                  For more information, see: https://github.com/JianliZh429/jumper"
 )]
 struct Cli {
     #[command(subcommand)]

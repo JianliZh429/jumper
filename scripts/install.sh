@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 JUMPER_HOME="${JUMPER_HOME:-$HOME/.jumper}"
 JUMPER_WORKSPACE="${JUMPER_WORKSPACE:-$HOME}"
 JUMPER_DEPTH="${JUMPER_DEPTH:-4}"
-REPO="${REPO:-yixun/jumper}"
+REPO="${REPO:-JianliZh429/jumper}"
 VERSION="${VERSION:-latest}"
 
 echo_info() {
@@ -136,7 +136,7 @@ Examples:
   jadd blog ~/work/blog
   jlist
 
-For more information: https://github.com/yixun/jumper
+For more information: https://github.com/JianliZh429/jumper
 HELP
 }
 
