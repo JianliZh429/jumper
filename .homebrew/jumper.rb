@@ -1,7 +1,7 @@
 class Jumper < Formula
   desc "CLI tool for quickly navigating between directories by name"
   homepage "https://github.com/yixun/jumper"
-  url "https://github.com/yixun/jumper/archive/v0.1.0.tar.gz"
+  url "https://github.com/yixun/jumper/archive/v0.1.1.tar.gz"
   sha256 :no_check  # Replace with actual SHA256 when releasing
   license "MIT"
   head "https://github.com/yixun/jumper.git", branch: "main"
