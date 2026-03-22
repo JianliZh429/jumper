@@ -1,42 +1,20 @@
 class Jumper < Formula
   desc "CLI tool for quickly navigating between directories by name"
   homepage "https://github.com/JianliZh429/jumper"
+  url "https://github.com/JianliZh429/jumper/archive/refs/tags/v0.1.1.tar.gz"
+  # sha256: Add actual SHA256 checksum when releasing
+  # To get SHA256: curl -LO <url> && shasum -a 256 <file>
   license "MIT"
-
-  on_macos do
-    if Hardware::CPU.arm?
-      url "https://github.com/JianliZh429/jumper/releases/download/v0.1.1/jumper-macOS-arm64.tar.gz"
-      sha256 :no_check  # Replace with actual SHA256 when releasing
-    else
-      url "https://github.com/JianliZh429/jumper/releases/download/v0.1.1/jumper-macOS-x86_64.tar.gz"
-      sha256 :no_check  # Replace with actual SHA256 when releasing
-    end
-  end
-
-  on_linux do
-    url "https://github.com/JianliZh429/jumper/releases/download/v0.1.1/jumper-Linux-x86_64.tar.gz"
-    sha256 :no_check  # Replace with actual SHA256 when releasing
-  end
-
   head "https://github.com/JianliZh429/jumper.git", branch: "main"
 
   depends_on "rust" => :build
 
   def install
-    # Build from source for head installs or when no binary is available
-    if build.head? || !File.exist?("jumper")
-      system "cargo", "install", *std_cargo_args
-    else
-      # Install pre-built binary
-      bin.install "jumper"
-    end
-
+    system "cargo", "install", *std_cargo_args
+    
     # Install shell integration scripts
-    if File.exist?("jumper.sh")
-      # Install to share directory for shell integration
-      (share/"jumper").install "jumper.sh"
-      (share/"jumper").install "install.sh"
-    end
+    (share/"jumper").install "jumper.sh"
+    (share/"jumper").install "install.sh"
   end
 
   def post_install
