@@ -28,6 +28,8 @@ alias j='. ${JUMPER_HOME}/jumper.sh'
 alias jadd='${JUMPER} add'
 alias jassemble='${JUMPER} assemble'
 alias jalias='${JUMPER} alias'
+alias jlist='${JUMPER} list'
+alias jremove='${JUMPER} remove'
 " > "${JUMPERRC}"
 
 if [[ -f "${HOME}/.zshrc" ]]; then

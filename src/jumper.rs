@@ -43,7 +43,7 @@ impl Jumper {
         let matches = search::find(&self.cfg.workspace, self.cfg.depth, name)?;
         if matches.is_empty() {
             return Err(anyhow!(
-                "Cannot find '{}' under '{}'",
+                "Cannot find '{}' under '{}'\nHint: Try 'jadd <name> <path>' to register it manually",
                 name,
                 self.cfg.workspace.display()
             ));

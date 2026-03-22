@@ -27,11 +27,18 @@ fn skip_dir(name: &str) -> bool {
 /// Returns a sorted vector of matching paths.
 pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> {
     let mut matched = Vec::new();
+    let mut is_root = true;
+    
     for entry in WalkDir::new(workspace)
         .max_depth(depth)
         .follow_links(true)
         .into_iter()
         .filter_entry(|e| {
+            // Always allow the root workspace directory
+            if is_root {
+                is_root = false;
+                return true;
+            }
             let fname = e.file_name().to_string_lossy();
             !is_hidden(e) && !skip_dir(&fname)
         })
