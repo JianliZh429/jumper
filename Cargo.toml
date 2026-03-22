@@ -2,6 +2,11 @@
 name = "jumper"
 version = "0.1.0"
 edition = "2021"
+description = "A CLI tool for quickly navigating between directories by name"
+license = "MIT"
+repository = "https://github.com/yixun/jumper"
+keywords = ["cli", "directory", "navigation", "productivity"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

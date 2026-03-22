@@ -2,62 +2,134 @@
 
 This guide covers installing Jumper on macOS and Linux.
 
-## Requirements
+## Quick Install (Recommended)
 
-- **Operating System**: macOS or Linux (bash/zsh)
-- **Shell**: bash or zsh
-- **Rust** (for building from source): [Install Rust](https://www.rust-lang.org/tools/install)
+### One-Liner Install
+
+The easiest way to install Jumper:
+
+```bash
+# macOS and Linux
+curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+```
+
+Then reload your shell:
+
+```bash
+exec "$SHELL" -l
+```
 
 ## Installation Methods
 
-### Method 1: Build from Source (Recommended)
+### Method 1: One-Liner Script (Recommended)
 
-1. **Clone or download the repository**
+Download and install automatically:
+
+```bash
+# Using curl
+curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+
+# Using wget
+wget -qO- https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
+
+# Specify version
+VERSION=v0.1.0 curl -fsSL https://github.com/yixun/jumper/releases/download/$VERSION/install.sh | bash
+```
+
+**What it does:**
+- Downloads the pre-built binary for your platform
+- Falls back to `cargo install` if binary unavailable
+- Sets up configuration automatically
+- Adds aliases to your shell config
+
+### Method 2: Homebrew (macOS)
+
+```bash
+# Add the tap
+brew tap yixun/jumper https://github.com/yixun/jumper.git
+
+# Install
+brew install jumper
+
+# Follow the post-install instructions
+```
+
+### Method 3: Cargo Install
+
+```bash
+# Install from git repository
+cargo install --git https://github.com/yixun/jumper.git
+
+# Then set up shell integration
+mkdir -p ~/.jumper
+jumper --help  # Verify installation
+```
+
+After installing via cargo, you'll need to set up the shell integration manually:
+
+```bash
+# Create configuration
+cat > ~/.jumper/jumperrc << 'EOF'
+export JUMPER_HOME=~/.jumper
+export JUMPER_WORKSPACE=$HOME
+export JUMPER_DEPTH=4
+alias j='. ~/.jumper/jumper.sh'
+alias jadd='jumper add'
+alias jassemble='jumper assemble'
+alias jalias='jumper alias'
+alias jlist='jumper list'
+alias jremove='jumper remove'
+EOF
+
+# Add to shell config
+echo 'source ~/.jumper/jumperrc' >> ~/.zshrc
+exec "$SHELL" -l
+```
+
+### Method 4: Build from Source
+
+1. **Clone the repository**
 
    ```bash
-   cd /path/to/jumper
+   git clone https://github.com/yixun/jumper.git
+   cd jumper
    ```
 
 2. **Build the binary**
 
    ```bash
    cargo build --release
-   cp target/release/jumper ./jumper
-   chmod +x ./jumper
    ```
 
 3. **Run the installer**
 
    ```bash
    ./install.sh
-   ```
-
-4. **Reload your shell**
-
-   ```bash
    exec "$SHELL" -l
    ```
 
-5. **Verify installation**
+### Method 5: Manual Installation
+
+1. **Download pre-built binary**
 
    ```bash
-   j --help
+   # macOS
+   curl -LO https://github.com/yixun/jumper/releases/latest/download/jumper-macOS-x86_64.tar.gz
+   
+   # Linux
+   curl -LO https://github.com/yixun/jumper/releases/latest/download/jumper-Linux-x86_64.tar.gz
    ```
-
-### Method 2: Use Pre-built Binary
-
-1. **Download the release tarball** for your platform:
-   - macOS: `jumper-macOS-x86_64.tar.gz`
-   - Linux: `jumper-Linux-x86_64.tar.gz`
 
 2. **Extract and install**
 
    ```bash
    tar -xzf jumper-*.tar.gz
-   cd jumper
-   ./install.sh
-   exec "$SHELL" -l
+   mkdir -p ~/.jumper
+   cp jumper ~/.jumper/
+   chmod +x ~/.jumper/jumper
    ```
+
+3. **Set up shell integration** (see Method 3)
 
 ## What the Installer Does
 
@@ -115,20 +187,36 @@ jumper completions fish > ~/.config/fish/completions/jumper.fish
 
 ## Uninstall
 
-To remove Jumper:
+To remove Jumper completely:
 
-1. Remove the jumper directory:
+### Using the Uninstall Script
+
+```bash
+curl -fsSL https://github.com/yixun/jumper/releases/latest/download/uninstall.sh | bash
+```
+
+### Manual Uninstall
+
+1. **Remove Jumper directory:**
    ```bash
    rm -rf ~/.jumper
    ```
 
-2. Remove the source line from your shell config:
+2. **Remove from shell config:**
    ```bash
    # Edit ~/.zshrc or ~/.bashrc and remove:
+   # # Jumper - Directory navigation
    # source ~/.jumper/jumperrc
    ```
 
-3. Reload your shell:
+3. **Reload shell:**
    ```bash
    exec "$SHELL" -l
    ```
+
+### Using Homebrew
+
+```bash
+brew uninstall jumper
+brew untap yixun/jumper
+```

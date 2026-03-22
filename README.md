@@ -33,26 +33,30 @@ For detailed guides, see the [Documentation](docs/README.md):
 
 ## 🚀 Quick Start
 
-### 1. Build
+### One-Liner Install (Recommended)
 
 ```bash
-cargo build --release
-cp target/release/jumper ./jumper
-chmod +x ./jumper
-```
-
-### 2. Install
-
-```bash
-./install.sh
+curl -fsSL https://github.com/yixun/jumper/releases/latest/download/install.sh | bash
 exec "$SHELL" -l
 ```
 
-### 3. Verify
+### Other Installation Methods
 
 ```bash
-j --help
+# Homebrew (macOS)
+brew tap yixun/jumper https://github.com/yixun/jumper.git
+brew install jumper
+
+# Cargo
+cargo install --git https://github.com/yixun/jumper.git
+
+# Build from source
+git clone https://github.com/yixun/jumper.git
+cd jumper && cargo build --release
+./install.sh
 ```
+
+For detailed installation instructions, see the [Installation Guide](docs/installation.md).
 
 ## 📖 Usage
 
