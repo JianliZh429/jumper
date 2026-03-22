@@ -58,8 +58,11 @@ impl Jumper {
 
     /// Register a new directory with the given name.
     pub fn add(&self, name: &str, path: &Path) -> Result<String> {
+        if !path.exists() {
+            return Err(anyhow!("Path '{}' does not exist", path.display()));
+        }
         if !path.is_dir() {
-            return Err(anyhow!("{} is not a directory", path.display()));
+            return Err(anyhow!("'{}' is not a directory", path.display()));
         }
         let mut store = self.store.load()?;
         store.set(name.to_string(), path.to_string_lossy().to_string());

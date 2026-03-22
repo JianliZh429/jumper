@@ -28,7 +28,7 @@ fn skip_dir(name: &str) -> bool {
 pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> {
     let mut matched = Vec::new();
     let mut is_root = true;
-    
+
     for entry in WalkDir::new(workspace)
         .max_depth(depth)
         .follow_links(true)
@@ -45,7 +45,11 @@ pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> 
     {
         let entry = match entry {
             Ok(e) => e,
-            Err(_) => continue,
+            Err(err) => {
+                // Log permission denied or other access errors
+                log::warn!("Skipping inaccessible path: {}", err);
+                continue;
+            }
         };
         let path = entry.path();
         if let Ok(metadata) = fs::metadata(path) {

@@ -16,10 +16,15 @@ fn get_env_mutex() -> &'static Mutex<()> {
 
 /// Helper to create a test Jumper instance with a temp home and workspace.
 /// Each test gets its own isolated environment.
-fn setup_test_jumper() -> (Jumper, tempfile::TempDir, tempfile::TempDir, std::sync::MutexGuard<'static, ()>) {
+fn setup_test_jumper() -> (
+    Jumper,
+    tempfile::TempDir,
+    tempfile::TempDir,
+    std::sync::MutexGuard<'static, ()>,
+) {
     // Acquire mutex to prevent concurrent tests from interfering with env vars
     let _guard = get_env_mutex().lock().unwrap();
-    
+
     let home_dir = tempdir().unwrap();
     let workspace_dir = tempdir().unwrap();
 
@@ -66,7 +71,7 @@ fn test_alias() {
     let workspace = std::env::var("JUMPER_WORKSPACE")
         .map(PathBuf::from)
         .unwrap();
-    
+
     // Create a test directory
     let test_dir = workspace.join("frontend");
     fs::create_dir_all(&test_dir).unwrap();
@@ -89,7 +94,7 @@ fn test_list() {
     let workspace = std::env::var("JUMPER_WORKSPACE")
         .map(PathBuf::from)
         .unwrap();
-    
+
     // Create test directories
     let dir1 = workspace.join("alpha");
     let dir2 = workspace.join("beta");
@@ -112,7 +117,7 @@ fn test_remove() {
     let workspace = std::env::var("JUMPER_WORKSPACE")
         .map(PathBuf::from)
         .unwrap();
-    
+
     // Create and add a test directory
     let test_dir = workspace.join("to_remove");
     fs::create_dir_all(&test_dir).unwrap();
@@ -138,7 +143,10 @@ fn test_remove_non_existent() {
 
     let result = j.remove("non_existent");
     assert!(result.is_err());
-    assert!(result.unwrap_err().to_string().contains("is not registered"));
+    assert!(result
+        .unwrap_err()
+        .to_string()
+        .contains("is not registered"));
 }
 
 #[test]
@@ -151,7 +159,7 @@ fn test_assemble() {
         .unwrap();
     let nested_dir = workspace.join("myapp");
     fs::create_dir_all(&nested_dir).unwrap();
-    
+
     // Canonicalize to match what the search will return
     let nested_dir_canonical = nested_dir.canonicalize().unwrap();
 
@@ -170,10 +178,7 @@ fn test_assemble_not_found() {
 
     let result = j.assemble("nonexistent_directory_xyz");
     assert!(result.is_err());
-    assert!(result
-        .unwrap_err()
-        .to_string()
-        .contains("Cannot find"));
+    assert!(result.unwrap_err().to_string().contains("Cannot find"));
 }
 
 #[test]
@@ -186,6 +191,7 @@ fn test_add_non_directory() {
     let fake_path = workspace.join("does_not_exist");
     let result = j.add("fake", &fake_path);
     assert!(result.is_err());
+    assert!(result.unwrap_err().to_string().contains("does not exist"));
 }
 
 #[test]
@@ -209,7 +215,7 @@ fn test_config_defaults() {
     std::env::remove_var("JUMPER_HOME");
     std::env::remove_var("JUMPER_WORKSPACE");
     std::env::remove_var("JUMPER_DEPTH");
-    
+
     // Ensure Config::load works without env vars (uses HOME from OS)
     let cfg = Config::load().expect("config loads");
     assert!(cfg.home.is_dir() || !cfg.home.exists());

@@ -17,14 +17,28 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
-    Goto { name: String },
-    Assemble { name: String },
-    Add { name: String, path: String },
-    Alias { alias: String, name: String },
+    Goto {
+        name: String,
+    },
+    Assemble {
+        name: String,
+    },
+    Add {
+        name: String,
+        path: String,
+    },
+    Alias {
+        alias: String,
+        name: String,
+    },
     List,
-    Remove { name: String },
+    Remove {
+        name: String,
+    },
     /// Generate shell completion script
-    Completions { shell: Shell },
+    Completions {
+        shell: Shell,
+    },
 }
 
 fn main() {
