@@ -46,8 +46,8 @@ pub fn find(workspace: &Path, depth: usize, name: &str) -> Result<Vec<PathBuf>> 
         let entry = match entry {
             Ok(e) => e,
             Err(err) => {
-                // Log permission denied or other access errors
-                log::warn!("Skipping inaccessible path: {}", err);
+                // Log at debug level for troubleshooting
+                log::debug!("Skipping inaccessible path: {}", err);
                 continue;
             }
         };

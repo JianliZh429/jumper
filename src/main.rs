@@ -86,6 +86,31 @@ fn main() {
 fn run() -> Result<()> {
     let cli = Cli::parse();
     let j = Jumper::new()?;
+    
+    // Validate workspace directory accessibility for commands that need it
+    if matches!(cli.command, Commands::Assemble { .. } | Commands::Goto { .. }) {
+        let cfg = jumper::config::Config::load()?;
+        if !cfg.workspace.exists() {
+            return Err(anyhow::anyhow!(
+                "Workspace directory '{}' does not exist.\n\
+                Hint: Set a valid workspace with JUMPER_WORKSPACE environment variable:\n  \
+                  export JUMPER_WORKSPACE=/path/to/your/workspace",
+                cfg.workspace.display()
+            ));
+        }
+        if let Err(e) = std::fs::read_dir(&cfg.workspace) {
+            return Err(anyhow::anyhow!(
+                "Cannot access workspace directory '{}': {}\n\
+                Hint: Set a valid workspace with JUMPER_WORKSPACE environment variable:\n  \
+                  export JUMPER_WORKSPACE=/path/to/your/workspace\n  \
+                Or set it permanently in ~/.jumper/config.toml:\n  \
+                  workspace = \"/path/to/your/workspace\"",
+                cfg.workspace.display(),
+                e
+            ));
+        }
+    }
+    
     match cli.command {
         Commands::Goto { name } => {
             if name.is_empty() {
