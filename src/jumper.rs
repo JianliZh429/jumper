@@ -48,7 +48,11 @@ impl Jumper {
                 self.cfg.workspace.display()
             ));
         }
-        let chosen = matches[0].clone();
+        // Find the first match that actually exists and is a directory
+        let chosen = matches
+            .into_iter()
+            .find(|p| p.is_dir())
+            .ok_or_else(|| anyhow!("Found matching paths, but none are valid directories"))?;
         // persist
         let mut store = self.store.load()?;
         store.set(name.to_string(), chosen.to_string_lossy().to_string());
