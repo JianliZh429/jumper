@@ -170,23 +170,45 @@ The installer sets these defaults:
 
 ## Shell Completions
 
-Generate shell completions for better CLI experience:
+Jumper provides shell completions for a better CLI experience.
 
-### Bash
+### Automatic Completion Setup
 
+The installer automatically sets up tab completion for registered directory names when you use the `j` command.
+
+**Examples:**
 ```bash
-jumper completions bash >> ~/.local/share/bash-completion/completions/jumper
+# Type 'j' and press Tab to see all registered directories
+j <TAB>
+
+# Type partial name and press Tab to complete
+j my<TAB>  # Completes to 'myproject' if registered
 ```
 
-### Zsh
+### Manual Completion Setup
+
+If you installed via cargo or built from source, you can manually enable completions:
+
+#### Bash
 
 ```bash
-jumper completions zsh > "${fpath[1]}/_jumper"
+# Completion is automatically included in jumperrc
+# Just source it in your ~/.bashrc:
+source ~/.jumper/jumperrc
 ```
 
-### Fish
+#### Zsh
 
 ```bash
+# Completion is automatically included in jumperrc
+# Just source it in your ~/.zshrc:
+source ~/.jumper/jumperrc
+```
+
+#### Fish
+
+```bash
+# Generate completions
 jumper completions fish > ~/.config/fish/completions/jumper.fish
 ```
 
