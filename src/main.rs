@@ -1,5 +1,7 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
+use clap_complete::engine::{ArgValueCompleter, CompletionCandidate};
+use clap_complete::env::CompleteEnv;
 use clap_complete::{generate, Shell};
 use env_logger::Env;
 use log::error;
@@ -7,6 +9,26 @@ use std::io;
 use std::path::Path;
 
 use jumper::jumper::Jumper;
+use jumper::store::Store;
+
+/// Get all registered directory names for shell completion.
+fn get_registered_names() -> Vec<String> {
+    let home = std::env::var("JUMPER_HOME").unwrap_or_else(|_| {
+        directories::BaseDirs::new()
+            .map(|d| d.home_dir().join(".jumper").to_string_lossy().to_string())
+            .unwrap_or_else(|| "~/.jumper".to_string())
+    });
+    let store = Store::new(Path::new(&home));
+    match store.load() {
+        Ok(route_store) => route_store.routes.into_keys().collect(),
+        Err(_) => Vec::new(),
+    }
+}
+
+fn complete_registered_names(_current: &std::ffi::OsStr) -> Vec<CompletionCandidate> {
+    let names = get_registered_names();
+    names.into_iter().map(CompletionCandidate::new).collect()
+}
 
 #[derive(Debug, Parser)]
 #[command(
@@ -34,13 +56,15 @@ enum Commands {
     #[command(visible_alias = "g")]
     Goto {
         /// Directory name to jump to. If omitted, jumps to workspace root.
-        #[arg(default_value = "")]
+        #[arg(default_value = "", value_name = "NAME")]
+        #[arg(add = ArgValueCompleter::new(complete_registered_names))]
         name: String,
     },
     /// Find a directory by name and register it
     #[command(visible_alias = "a")]
     Assemble {
         /// Directory name to search for
+        #[arg(value_name = "NAME")]
         name: String,
     },
     /// Register a directory with a custom name
@@ -73,9 +97,15 @@ enum Commands {
         /// Shell type
         shell: Shell,
     },
+    /// Output registered names for shell completion (internal use)
+    #[command(hide = true)]
+    Complete,
 }
 
 fn main() {
+    // Handle dynamic shell completion BEFORE any output
+    CompleteEnv::with_factory(Cli::command).complete();
+
     env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
     if let Err(err) = run() {
         error!("{err:#}");
@@ -86,9 +116,12 @@ fn main() {
 fn run() -> Result<()> {
     let cli = Cli::parse();
     let j = Jumper::new()?;
-    
+
     // Validate workspace directory accessibility for commands that need it
-    if matches!(cli.command, Commands::Assemble { .. } | Commands::Goto { .. }) {
+    if matches!(
+        cli.command,
+        Commands::Assemble { .. } | Commands::Goto { .. }
+    ) {
         let cfg = jumper::config::Config::load()?;
         if !cfg.workspace.exists() {
             return Err(anyhow::anyhow!(
@@ -110,7 +143,7 @@ fn run() -> Result<()> {
             ));
         }
     }
-    
+
     match cli.command {
         Commands::Goto { name } => {
             if name.is_empty() {
@@ -151,6 +184,12 @@ fn run() -> Result<()> {
         Commands::Completions { shell } => {
             let mut cmd = Cli::command();
             generate(shell, &mut cmd, "jumper", &mut io::stdout());
+        }
+        Commands::Complete => {
+            // Output registered names for shell completion
+            for name in get_registered_names() {
+                println!("{}", name);
+            }
         }
     }
     Ok(())

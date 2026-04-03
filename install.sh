@@ -222,6 +222,16 @@ alias jassemble='${JUMPER_HOME}/jumper assemble'
 alias jalias='${JUMPER_HOME}/jumper alias'
 alias jlist='${JUMPER_HOME}/jumper list'
 alias jremove='${JUMPER_HOME}/jumper remove'
+
+# Shell completion for registered directory names
+_jumper_complete() {
+    local cur="\${COMP_WORDS[COMP_CWORD]}"
+    local -a names
+    names=($("${JUMPER_HOME}/jumper" complete 2>/dev/null))
+    COMPREPLY=(\$(compgen -W "\${names[*]}" -- "\$cur"))
+    return 0
+}
+complete -F _jumper_complete j 2>/dev/null || true
 EOF
 
 # Find shell config

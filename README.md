@@ -29,7 +29,7 @@ For detailed guides, see the [Documentation](docs/README.md):
 - **Aliases** - Create shortcuts with `jalias`
 - **Persistent Storage** - Your mappings are saved between sessions
 - **Shell Integration** - Seamless integration with bash/zsh
-- **Shell Completions** - Tab completion for all commands
+- **Shell Completions** - Tab completion for registered directory names
 
 ## 🚀 Quick Start
 

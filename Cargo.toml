@@ -14,7 +14,7 @@ categories = ["command-line-utilities"]
 anyhow = "1"
 thiserror = "1"
 clap = { version = "4.4", features = ["derive"] }
-clap_complete = "4.4"
+clap_complete = { version = "4.4", features = ["unstable-dynamic"] }
 log = "0.4"
 env_logger = "0.10"
 serde = { version = "1", features = ["derive"] }
