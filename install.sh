@@ -224,14 +224,27 @@ alias jlist='${JUMPER_HOME}/jumper list'
 alias jremove='${JUMPER_HOME}/jumper remove'
 
 # Shell completion for registered directory names
-_jumper_complete() {
-    local cur="\${COMP_WORDS[COMP_CWORD]}"
-    local -a names
-    names=($("${JUMPER_HOME}/jumper" complete 2>/dev/null))
-    COMPREPLY=(\$(compgen -W "\${names[*]}" -- "\$cur"))
-    return 0
-}
-complete -F _jumper_complete j 2>/dev/null || true
+if [[ -n "\${BASH_VERSION:-}" ]]; then
+    # Bash completion
+    _jumper_complete() {
+        local cur="\${COMP_WORDS[COMP_CWORD]}"
+        local -a names
+        names=\$("${JUMPER_HOME}/jumper" complete 2>/dev/null)
+        COMPREPLY=(\$(compgen -W "\${names[*]}" -- "\$cur"))
+        return 0
+    }
+    complete -F _jumper_complete j 2>/dev/null || true
+elif [[ -n "\${ZSH_VERSION:-}" ]]; then
+    # Zsh completion
+    _jumper_zsh_complete() {
+        local -a names
+        names=(\$("${JUMPER_HOME}/jumper" complete 2>/dev/null))
+        _describe 'registered directories' names
+    }
+    # Use compctl which works in all zsh contexts
+    compctl -K _jumper_zsh_complete j 2>/dev/null || \
+    compdef _jumper_zsh_complete j 2>/dev/null || true
+fi
 EOF
 
 # Find shell config
@@ -265,6 +278,19 @@ if [[ -f "$SHELL_CONFIG" ]]; then
     if grep -qF "$SOURCE_LINE" "$SHELL_CONFIG" 2>/dev/null; then
         echo_info "Jumper already configured in $SHELL_CONFIG"
     else
+        # For zsh, ensure compinit is loaded before jumperrc
+        if [[ "$SHELL_CONFIG" == *".zshrc" ]]; then
+            # Check if compinit is already present
+            if ! grep -q "compinit" "$SHELL_CONFIG" 2>/dev/null; then
+                echo "" >> "$SHELL_CONFIG"
+                echo "# Enable zsh completion system" >> "$SHELL_CONFIG"
+                echo "autoload -Uz compinit" >> "$SHELL_CONFIG"
+                echo "compinit" >> "$SHELL_CONFIG"
+                echo "" >> "$SHELL_CONFIG"
+                echo_info "Enabled zsh completion system"
+            fi
+        fi
+        
         echo "" >> "$SHELL_CONFIG"
         echo "# Jumper - Directory navigation" >> "$SHELL_CONFIG"
         echo "$SOURCE_LINE" >> "$SHELL_CONFIG"

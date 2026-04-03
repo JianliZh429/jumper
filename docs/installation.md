@@ -192,21 +192,17 @@ If you installed via cargo or built from source, you can manually enable complet
 #### Bash
 
 ```bash
-# Add to ~/.bashrc
-source ~/.jumper/completion.bash
-
-# Or generate completions for the jumper command
-jumper completions bash >> ~/.local/share/bash-completion/completions/jumper
+# Completion is automatically included in jumperrc
+# Just source it in your ~/.bashrc:
+source ~/.jumper/jumperrc
 ```
 
 #### Zsh
 
 ```bash
-# Add to ~/.zshrc
-source ~/.jumper/completion.zsh
-
-# Or generate completions for the jumper command
-jumper completions zsh > "${fpath[1]}/_jumper"
+# Completion is automatically included in jumperrc
+# Just source it in your ~/.zshrc:
+source ~/.jumper/jumperrc
 ```
 
 #### Fish
